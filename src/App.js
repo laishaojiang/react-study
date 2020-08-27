@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MyForm from './components/MyForm'
+import MyForm from './page/MyForm'
 import './App.css';
 
 function App() {
