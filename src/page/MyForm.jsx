@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Input from '../components/Input'
-import  createForm from '../components/l-rc-form'
+import  createForm from '../components/rc-form'
+import Dialog from '../components/Dialog'
+import '../compose'
+import store from '../store'
 
 const nameRules = {require: true, message:'请输入姓名！'}
 const passRules = {require: true, message:'请输入密码！'}
@@ -10,6 +13,7 @@ class MyForm extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            visible: false
             // username:'',
             // password: ''
         }
@@ -17,6 +21,10 @@ class MyForm extends Component {
 
     componentDidMount() {
         this.props.form.setFieldsValue({username: 'tom'})
+
+        store.subscribe(() => {
+            this.forceUpdate()
+        })
     }
 
     submit = (e) => {
@@ -30,6 +38,25 @@ class MyForm extends Component {
             }
         })
     }
+
+    toggle = () => {
+        this.setState({
+            visible:!this.state.visible
+        })
+    }
+
+    add = () => {
+        store.dispatch({type:'ADD', playload: 1})
+    }
+
+    asyncAdd = () => {
+        store.dispatch(() => {
+            setTimeout(() => {
+                store.dispatch({type:'ADD', playload: 1})
+            }, 1000)
+        })
+    }
+
     render() {
         console.log(this.props)
         const { username, password} = this.state
@@ -39,6 +66,11 @@ class MyForm extends Component {
                 {getFieldDecoretor('username', { rules: [nameRules]})(<Input type="text"  />)}
                 {getFieldDecoretor('password', { rules: [passRules]})(<Input type="text" />)}
                 <button onClick={this.submit}>登录</button>
+                <button onClick={this.toggle}>显示弹窗</button>
+                <button onClick={this.add}>ADD</button>
+                <button onClick={this.asyncAdd}>async ADD</button>
+                <div>{store.getState() && store.getState().count},1</div>
+                {this.state.visible && <Dialog />} 
             </div>
         );
     }
